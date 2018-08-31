@@ -65,6 +65,8 @@ void DataPublisherFlow::registerPublishers() {
       node_handle_.advertise<geometry_msgs::Vector3Stamped>(kTopicBiasGyro, 1);
   pub_extrinsics_T_C_Bs_ = node_handle_.advertise<geometry_msgs::PoseArray>(
       kCameraExtrinsicTopic, 1);
+  pub_pose_T_G_I_lc_pnp_ =
+      node_handle_.advertise<geometry_msgs::PoseStamped>(kTopicPoseGlobalLc, 1);
 }
 
 void DataPublisherFlow::attachToMessageFlow(message_flow::MessageFlow* flow) {
@@ -89,7 +91,8 @@ void DataPublisherFlow::attachToMessageFlow(message_flow::MessageFlow* flow) {
       kSubscriberNodeName, message_flow::DeliveryOptions(),
       [&](const vio::LocalizationResult::ConstPtr& localization) {
         CHECK(localization != nullptr);
-        localizationCallback(localization->T_G_I_lc_pnp.getPosition());
+        localizationCallback(
+            localization->timestamp_ns, localization->T_G_I_lc_pnp);
       });
 
   if (FLAGS_publish_only_on_keyframes) {
@@ -268,9 +271,15 @@ void DataPublisherFlow::stateDebugCallback(
 }
 
 void DataPublisherFlow::localizationCallback(
-    const Eigen::Vector3d& p_G_I_lc_pnp) {
+    int64_t timestamp_ns, const aslam::Transformation& T_G_I_lc_pnp) {
+  ros::Time timestamp_ros = createRosTimestamp(timestamp_ns);
+  geometry_msgs::PoseStamped T_G_I_lc_pnp_message;
+  tf::poseStampedKindrToMsg(
+      T_G_I_lc_pnp, timestamp_ros, visualization::kDefaultMapFrame, &T_G_I_lc_pnp_message);
+  pub_pose_T_G_I_lc_pnp_.publish(T_G_I_lc_pnp_message);
+
   visualization::Sphere sphere;
-  sphere.position = p_G_I_lc_pnp;
+  sphere.position = T_G_I_lc_pnp.getPosition();
   sphere.radius = 0.2;
   sphere.color = visualization::kCommonRed;
   sphere.alpha = 0.8;

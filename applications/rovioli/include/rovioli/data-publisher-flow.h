@@ -34,6 +34,7 @@ class DataPublisherFlow {
   const std::string kTopicBiasAcc = kGeneralTopicPrefix + "bias_acc";
   const std::string kTopicBiasGyro = kGeneralTopicPrefix + "bias_gyro";
   const std::string kCameraExtrinsicTopic = kGeneralTopicPrefix + "cam_T_C_B";
+  const std::string kTopicPoseGlobalLc = kGeneralTopicPrefix + "T_G_I_lc_pnp";
 
   DataPublisherFlow();
 
@@ -48,7 +49,8 @@ class DataPublisherFlow {
   void stateDebugCallback(
       const vio::ViNodeState& vinode, const bool has_T_G_M,
       const aslam::Transformation& T_G_M);
-  void localizationCallback(const Eigen::Vector3d& p_G_I_lc_pnp);
+  void localizationCallback(
+      int64_t timestamp_ns, const aslam::Transformation& T_G_I_lc_pnp);
 
   std::unique_ptr<visualization::ViwlsGraphRvizPlotter> plotter_;
   ros::NodeHandle node_handle_;
@@ -59,6 +61,7 @@ class DataPublisherFlow {
   ros::Publisher pub_imu_acc_bias_;
   ros::Publisher pub_imu_gyro_bias_;
   ros::Publisher pub_extrinsics_T_C_Bs_;
+  ros::Publisher pub_pose_T_G_I_lc_pnp_;
 
   common::TimeoutCounter map_publisher_timeout_;
 
