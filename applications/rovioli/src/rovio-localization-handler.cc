@@ -178,7 +178,10 @@ double getLocalizationResultGravityDisparityAngleDeg(
   const Eigen::Vector3d gravity_direction_localization_pnp =
       T_G_I_lc_pnp.getRotation().inverse().rotate(Eigen::Vector3d::UnitZ());
 
-  CHECK_NEAR(gravity_direction_vio.squaredNorm(), 1.0, 1e-8);
+  // CHECK_NEAR(gravity_direction_vio.squaredNorm(), 1.0, 1e-8);
+  if (gravity_direction_vio.squaredNorm() >= (1.0 + 1e-8)) {
+    LOG(ERROR) << "Gravity norm from vio estimate is " << gravity_direction_vio.squaredNorm();
+  }
   CHECK_NEAR(gravity_direction_localization_pnp.squaredNorm(), 1.0, 1e-8);
 
   const double error_cosine =
