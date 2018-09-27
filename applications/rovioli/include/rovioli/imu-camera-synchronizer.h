@@ -37,7 +37,7 @@ class ImuCameraSynchronizer {
   void shutdown();
 
   static constexpr size_t kFramesToSkipAtInit = 1u;
-
+  static constexpr size_t kMaxFramesToSkipAtRuntime = 100u;
  private:
   void checkIfMessagesAreIncomingWorker();
   void processDataThreadWorker();
@@ -50,6 +50,8 @@ class ImuCameraSynchronizer {
 
   // Number of already skipped frames.
   size_t frame_skip_counter_;
+
+  size_t frame_skip_counter_runtime_;
 
   int64_t previous_nframe_timestamp_ns_;
   std::mutex m_previous_nframe_timestamp_ns_;

@@ -19,6 +19,7 @@ ImuCameraSynchronizer::ImuCameraSynchronizer(
     : camera_system_(camera_system),
       kImuBufferLengthNanoseconds(aslam::time::seconds(30u)),
       frame_skip_counter_(0u),
+      frame_skip_counter_runtime_(0u),
       previous_nframe_timestamp_ns_(-1),
       min_nframe_timestamp_diff_ns_(
           kSecondsToNanoSeconds /
@@ -208,8 +209,12 @@ void ImuCameraSynchronizer::processDataThreadWorker() {
     }
 
     if (skip_frame) {
+      ++frame_skip_counter_runtime_;
+      CHECK_LT(frame_skip_counter_runtime_, kMaxFramesToSkipAtRuntime);
       continue;
     }
+
+    frame_skip_counter_runtime_ = 0;
 
     previous_nframe_timestamp_ns_ = current_frame_timestamp_ns;
     // Manually unlock the mutex as the previous nframe timestamp can be
