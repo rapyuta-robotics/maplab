@@ -143,7 +143,7 @@ bool integrateAllOptionalSensorDepthResourcesOfType(
           num_resources);
       size_t idx = 0u;
       for (const std::pair<int64_t, backend::ResourceId>& stamped_resource_id :
-           resource_buffer.buffered_values()) {
+           resource_buffer) {
         // If the resource timestamp does not lie within the min and max
         // timestamp of the vertices, we cannot interpolate the position. To
         // keep this efficient, we simply replace timestamps outside the range
@@ -168,7 +168,7 @@ bool integrateAllOptionalSensorDepthResourcesOfType(
       idx = 0u;
       common::ProgressBar tsdf_progress_bar(resource_buffer.size());
       for (const std::pair<int64_t, backend::ResourceId>& stamped_resource_id :
-           resource_buffer.buffered_values()) {
+           resource_buffer) {
         tsdf_progress_bar.increment();
 
         // We assume the frame of reference for the sensor system is the IMU

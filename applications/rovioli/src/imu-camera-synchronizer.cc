@@ -171,8 +171,12 @@ void ImuCameraSynchronizer::processDataThreadWorker() {
       }
       if (result ==
           vio_common::ImuMeasurementBuffer::QueryResult::kDataNeverAvailable) {
-        LOG(ERROR) << "Camera/IMU data out-of-order. This might be okay during "
-                      "initialization.";
+        if (initial_sync_succeeded_) {
+            LOG(ERROR) << "Camera/IMU data out-of-order.";
+        } else {
+            LOG(WARNING) << "Camera/IMU data out-of-order. This might be okay during "
+                          "initialization.";
+        }
         CHECK(!initial_sync_succeeded_)
             << "Some synced IMU-camera frames were"
             << "already published. This will lead to map inconsistency.";

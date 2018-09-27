@@ -100,6 +100,11 @@ class ImuMeasurementBuffer {
   QueryResult isDataAvailableUpToImpl(
       int64_t timestamp_ns_from, int64_t timestamp_ns_to) const;
 
+  QueryResult getImuDataInterpolatedBordersImpl(
+      int64_t timestamp_ns_from, int64_t timestamp_ns_to,
+      Eigen::Matrix<int64_t, 1, Eigen::Dynamic>* imu_timestamps,
+      Eigen::Matrix<double, 6, Eigen::Dynamic>* imu_measurements) const;
+
   typedef std::pair<int64_t, vio::ImuMeasurement> BufferElement;
   typedef Eigen::aligned_allocator<BufferElement> BufferAllocator;
   typedef common::TemporalBuffer<vio::ImuMeasurement, BufferAllocator> Buffer;

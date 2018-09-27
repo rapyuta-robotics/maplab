@@ -148,7 +148,7 @@ void OptionalSensorData::serialize(
     for (const SensorIdToMeasurementsMap<GpsUtmMeasurement>::
         value_type::second_type::BufferType::value_type&
         gps_utm_measurement_with_timestamp :
-        sensor_id_with_measurement.second.buffered_values()) {
+        sensor_id_with_measurement.second) {
       CHECK_EQ(
           gps_utm_measurement_with_timestamp.first,
           gps_utm_measurement_with_timestamp.second.getTimestampNanoseconds());
@@ -165,7 +165,7 @@ void OptionalSensorData::serialize(
     for (const SensorIdToMeasurementsMap<GpsWgsMeasurement>::
         value_type::second_type::BufferType::value_type&
         gps_wgs_measurement_with_timestamp :
-        sensor_id_with_measurement.second.buffered_values()) {
+        sensor_id_with_measurement.second) {
       CHECK_EQ(
           gps_wgs_measurement_with_timestamp.first,
           gps_wgs_measurement_with_timestamp.second.getTimestampNanoseconds());
